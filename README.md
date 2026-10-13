@@ -30,7 +30,7 @@ and a record of what worked. framework brings those together, from the first ide
 | **Your verdict on the work** | Every task run ends with a report and manual checks. A model cannot accept a review on your behalf. |
 | **Automatic runs with limits** | Choose the lists, the number of items and when to start fresh chats. Runs stop at review points, failures or your limit. |
 | **Knowledge that carries forward** | Models record useful findings and accepted fixes, then search them when later work needs them. |
-| **Changes you can inspect** | See the files a run changed, compare before and after, and revert a change, a file or a run. |
+| **Changes you can inspect** | See every file a task changed, its commands' work included, compare it with the commit taken before the task, and take the whole task back. |
 
 ## From idea to working software
 
@@ -45,8 +45,10 @@ flowchart LR
 ```
 
 **Run next task** gives the model the next open item, including its current steps and review requirements.
-**Accept** closes a task waiting for your judgment. **Reject** sends your reason back: the model plans
-corrective steps first, so you can inspect the correction before the next run builds it.
+**Accept** closes a task waiting for your judgment. **Reject** writes your reason into the task and runs nothing:
+when you are ready, **Fix** gives the model the task with your reasons, and it plans its corrective steps before it builds them.
+A plain chat message only talks: if the model wants to change files or run commands, a card asks you first, and work on
+an item goes on only from the run button.
 
 <details>
 <summary><strong>See the interview: pick an answer or write your own</strong></summary>
@@ -82,15 +84,30 @@ on, then judge those fixes together afterwards.
 
 ## A project that remembers what it learns
 
-The project's documents give each run its scope, current decisions and work to do. **Documentation** keeps
-useful findings; **Solved issues** keeps the symptom, cause and accepted fix of a defect. Models search for
+The project's documents give each run its scope, what you decided and work to do. **Verify** holds the checks every
+task must pass before it is ticked, and every run is given it. **Documentation** keeps useful findings and the
+models' own choices; **Solved issues** keeps the symptom, cause and accepted fix of a defect. Models search for
 relevant sections instead of reading the whole knowledge base each time.
 
 <img src="images/documents.png" alt="Searchable project documentation, with a section explaining how money is stored and calculated" width="100%">
 
 Need your own record of design decisions, release checks or research? **New document…** creates a list, text
 or searchable knowledge base. Write its rules in plain language: when a model writes, what an entry contains,
-and when a model reads it. Those rules accompany every run.
+and when a model reads it. Those rules accompany every run. When a document or a reference document is no
+longer needed, set it inactive: you can still read it, and models leave it alone until you activate it again.
+
+As a project grows, archive what is finished. **Archive done items** moves the done tasks you choose into an archive
+under their list, each keeping its number, and **Archive…** does the same for sections of Documentation or of your own
+documents. Anything archived by mistake can be restored. Models work from what is current: they read an archive only when you ask them to, and you allow each
+read on a card.
+
+When a project changes course, say from a web app to a game in Unreal, agree on the new direction with the model in
+the chat and confirm it on a card, ticking the documents the change may touch. Project then says plainly that the
+direction changed, and **Inspect and rebuild the project** comes first in the working order. Its run archives what no
+longer fits in those documents, and only that: old lines of Project and Verify go to their archive with the new ones in
+their place, outdated passages of Prompt are struck through, and old open items and articles are archived, with new
+items in their place. You judge it all at its review, and can take it back. An item that still asks for the old
+direction is not built either way until you say how.
 
 <details>
 <summary><strong>See a custom document with rules of its own</strong></summary>
@@ -102,13 +119,22 @@ and when a model reads it. Those rules accompany every run.
 
 ## Review the code and the plan
 
-**Files** shows the code folder, highlights files changed by the model's edit tools, and lets you choose a run
-to inspect. Compare changes inline or side by side. Revert one change, one file, or the whole run; a change
-edited again since is left alone and named in the result. Reverting a run also restores its task's checkboxes.
+Before every task, the app commits your code folder with git and keeps the documents beside it. You need not know
+git: before the first task the app checks for it and offers to set it up, and a project without it is asked again before
+its next task.
+**Files** shows
+the code folder and highlights every file that differs from that commit, whether the model's edits or its commands
+changed it, and lets you choose a task to inspect. Compare changes inline or side by side. Take the whole task
+back, code and documents together, with **Back to before…**, here or in **Run history**.
 
 The plan is reviewable too. Ask a model to reword, reorder or remove open items: its proposal appears beside
-the current plan, with **Apply** and **Discard**. Applied proposals can be reverted. You can also rearrange
-the working order, skip an uncertain item, or choose an item to run now.
+the current plan, the words that change highlighted inside each item, with **Apply** and **Discard**. Applied
+proposals can be reverted. You can also rearrange
+the working order, pause an item, or choose an item to run now.
+
+Documents open locked, so reading never ticks a box by accident, and you can select and copy across several items at
+once. Unlock one with the lock in the top bar to tick items, edit their words and steps in place, or add and remove
+items by hand. Checkboxes above a list show or hide its open, waiting, paused and done items.
 
 ## Choose how you work
 
@@ -118,10 +144,11 @@ the working order, skip an uncertain item, or choose an item to run now.
 | **Usage and context in view** | See run duration and reported tokens, subscription usage where available, and the model's guidance on when to start fresh. |
 | **Tools for your project** | Connect MCP servers per project or across projects in Settings. Models can propose a server for you to approve. |
 | **Permissions you control** | Pick a permission mode; allow a request once, always allow it, or deny it. Review saved rules in **Allowed**. |
-| **Screenshots, files and chat history** | Attach designs, code, logs or PDFs. Search earlier chats, reopen them, or edit a sent message and continue from there. |
-| **Several projects at once** | Leave a project while its model works. Its Home card shows whether it is working, waiting for you, or finished. |
+| **Screenshots, files and chat history** | Attach designs, code, logs or PDFs; a long paste becomes an attached file, so the message box keeps only your words. Search earlier chats, reopen them, or edit a sent message and continue from there. |
+| **Several projects at once** | Leave a project while its model works. Its Home card shows whether it is working, waiting for you, or finished. Select several on Home to remove them together, from the app only or with their code folders. |
+| **Process Monitor** | See every process the models started, in every project, still running or not: the command, the chat and run, how long it ran. End one that hangs; nothing is ended for you. |
 | **A workspace that fits** | Move and resize Chat and Output, keep a layout per project, and choose a light or dark theme. |
-| **Portable project records** | Export the documents, rules and optional chats you choose, then import them and select a code folder. |
+| **Portable project knowledge** | Export the documents you choose, each with or without its archive. Import them as a new project, or into a project you already have: a document whose name it has comes in renamed or merged into its own, and your own documents come in inactive until you activate them. |
 | **Help inside the app** | The **?** beside Settings opens a short illustrated guide, from creating a project to reviewing a task. |
 
 <details>
@@ -138,8 +165,8 @@ Models work directly in the code folder you choose. framework keeps its document
 as local JSON and files in `%APPDATA%\fmwk\`, without adding its own bookkeeping files to your codebase.
 The app needs no account or cloud service of its own.
 
-An exported project contains the selected project records, **not the code folder**. Keep or transfer your code
-separately, then point the imported project at it.
+An exported project contains only the documents you selected: **not the code folder**, its chats or its settings. Keep
+or transfer your code separately, then point the imported project at it.
 
 ## Get started
 
